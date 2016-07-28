@@ -1,4 +1,6 @@
-# Autocannon-s3-storage
+![banner](./autocannon-banner.png)
+
+# Autocannon-storage
 
 A utility module for storing autocannon results in s3 and sorting/retrieving them in useful manners.
 
@@ -119,7 +121,7 @@ The callback takes `error` and `results` parameters.
 
 A wrapper around s3-blob-store that creates and returns that store when passed valid credentials and a bucket name
 
-Valid credentials have accessKey and secretKey attributes
+Valid credentials have accessKey and secretKey attributes. Used by the command line functionality.
 
 
 ## Acknowlegements
