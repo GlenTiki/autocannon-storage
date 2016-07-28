@@ -1,3 +1,33 @@
-Usage: autocannon-storage [opts]
+Usage: autocannon-storage {command} [opts]
 
-Does stuff.
+A convenient command-line library for storing autocannon results in S3
+
+Available commands:
+  save
+    Save autocannon results to s3
+  load
+    Load autocannon results from s3 and output them as ndjson
+
+Available options:
+
+  -i/--input FILE
+        The path to some json results to save. Required when not piping into this tool.
+  -o/--output DIRECTORY
+        The path to some directory to save results in. Will save results in `${result.finish}.json`
+  -c/--credentials FILE
+        The path to some json file with S3 credentials
+  -k/--accessKey S3_ACCESS_KEY
+        Some S3 access key
+  -K/--secretKey S3_SECRET_KEY
+        Some S3 secret key
+  -b/--bucket NAME
+        The title of some S3 bucket
+  -a/--amount AMOUNT
+        The amount of results to load
+  -t/--tag TAG
+        A semver version tag to tag the results with if doing a save.
+        An NPM version tag to filter results by if doing a load.
+  -v/--version
+        Print the version number.
+  -h/--help
+        Print this menu.

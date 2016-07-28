@@ -10,7 +10,8 @@ const s3blobs = require('s3-blob-store')
 const fs = require('fs')
 const path = require('path')
 const steed = require('steed')
-const createStore = require('./storage')
+const semver = require('semver')
+const createStore = require('./lib/storage')
 const help = fs.readFileSync(path.join(__dirname, 'help.txt'), 'utf8')
 
 function runCmd () {
@@ -32,27 +33,40 @@ function runCmd () {
 
       fs.createReadStream(argv.input)
         .pipe(ndjsonStream)
-        .on('data', _handleJsonSave)
+        .on('data', _handleJsonSave(argv))
     } else {
       process.stdin
         .pipe(ndjsonStream)
-        .on('data', _handleJsonSave)
+        .on('data', _handleJsonSave(argv))
     }
   }
 
-  function _handleJsonSave (json) {
-    console.log('starting to save')
-    store.save(json, (err) => {
-      if (err) throw new Error('save failed', err)
-      console.log('saved successfully')
-    })
+  function _handleJsonSave (argv) {
+    return (json) => {
+      json.tag = argv.tag
+      console.log('starting to save')
+      store.save(json, (err) => {
+        if (err) throw new Error('save failed', err)
+        console.log('saved successfully')
+      })
+    }
   }
 
   function _handleLoad (args) {
     const argv = _handleArgs(args)
     store = createStore(createS3Store(argv.credentials, argv.bucket))
 
-    store.load({ amt: argv.amount }, (err, results) => {
+    if (!argv.tag) store.load({ amt: argv.amount }, _handleJsonLoad(argv))
+    else {
+      store.filter({
+        amt: argv.amount,
+        filter: (elem) => semver.satisfies(elem.tag, argv.tag)
+      }, _handleJsonLoad(argv))
+    }
+  }
+
+  function _handleJsonLoad (argv) {
+    return (err, results) => {
       if (err) throw new Error(err)
 
       if (argv.output) {
@@ -67,7 +81,7 @@ function runCmd () {
       results.forEach((result) => {
         console.log(JSON.stringify(result))
       })
-    })
+    }
   }
 }
 
@@ -92,6 +106,8 @@ function _handleArgs (args) {
       input: 'i',
       output: 'o',
       credentials: 'c',
+      accessKey: 'k',
+      secretKey: 'K',
       bucket: 'b',
       amount: 'a',
       tag: 't',
