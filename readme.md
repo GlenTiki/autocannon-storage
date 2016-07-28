@@ -2,6 +2,8 @@
 
 # Autocannon-storage
 
+[![Build Status](https://travis-ci.org/thekemkid/autocannon-storage.svg?branch=master)](https://travis-ci.org/thekemkid/autocannon-storage)
+
 A utility module for storing autocannon results in s3 and sorting/retrieving them in useful manners.
 
 ## Usage
