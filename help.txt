@@ -1,0 +1,3 @@
+Usage: autocannon-storage [opts]
+
+Does stuff.
